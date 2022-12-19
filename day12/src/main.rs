@@ -55,12 +55,9 @@ fn find_shortest_route_len(
         check_queue = vec![];
 
         for point in depth_queue {
-            // println!("point from queue x:{} y:{}", point.0, point.1);
             for ptc in adjacent_points(point) {
                 let (x, y) = ptc;
-                // print!("checking adjacement x:{} y:{} - ", x, y);
                 if x >= x_lim as i32 || x < 0 || y >= y_lim as i32 || y < 0 {
-                    // println!("skipping out of bounds");
                     continue;
                 }
 
@@ -68,25 +65,21 @@ fn find_shortest_route_len(
                     - height_map[point.0 as usize][point.1 as usize] as i32)
                     > 1
                 {
-                    // println!("skipping distance too far away");
                     continue;
                 }
 
                 if visited.insert(ptc) {
-                    // println!("adding to queue");
                     check_queue.push(ptc);
-                } else {
-                    // println!("already checked");
-                }
-
+                } 
                 if ptc == final_postition {
+                    depth += 1;
                     break 'super_looper;
                 }
             }
         }
         depth += 1;
     }
-    return depth + 1;
+    return depth;
 }
 
 fn adjacent_points(point: (i32, i32)) -> Vec<(i32, i32)> {
