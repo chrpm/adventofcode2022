@@ -1,4 +1,5 @@
 use std::fs;
+use std::cmp::Ordering;
 
 fn test() {
     assert!(is_val_integer(&String::from("5")));
@@ -12,10 +13,13 @@ fn test() {
 fn main() {
     test();
 
-    let file_path = "test_input.txt";
+    let file_path = "input.txt";
     // let file_path = "input.txt";
     let packet_pairs = load_input(file_path);
+    let decoder_packet_1 = String::from("[[2]]");
+    let decoder_packet_2 = String::from("[[6]]");
 
+    // part 1
     let mut pairs_in_order:Vec<i32> = Vec::new();
     for (i, pair) in packet_pairs.iter().enumerate() {
         let (l, r) = pair;
@@ -25,15 +29,40 @@ fn main() {
     }
 
     let sum: i32 = pairs_in_order.iter().sum();
-    println!("sum: {}", sum);
+    println!("part 1 solution: {}", sum);
+
+    // part 2
+    let mut all_packets = Vec::new();
+    for pair in packet_pairs {
+        let (l, r) = pair;
+        all_packets.push(l);
+        all_packets.push(r);
+    }
+    all_packets.push(decoder_packet_1.clone());
+    all_packets.push(decoder_packet_2.clone());
+
+    all_packets.sort_by(|a, b| pair_ordering_comparison(a.to_string(), b.to_string()));
+
+
+    let decoder_1_index = all_packets.iter().position(|x| x == &decoder_packet_1).unwrap();
+    let decoder_2_index = all_packets.iter().position(|x| x == &decoder_packet_2).unwrap();
+
+    println!("part 2 solution: {}",(decoder_1_index+1) * (decoder_2_index+1));
 }
 
 fn is_pair_in_right_order(left: String, right: String) -> bool {
-    println!("left: {}, right: {}", left, right);
     let eval = evaluate_pair(left, right);
-    println!("eval: {:?}, decision: {}", eval, !matches!(eval, PairEval::Right));
-    println!();
     return !matches!(eval, PairEval::Right);
+}
+
+fn pair_ordering_comparison(left: String, right: String) -> Ordering {
+    let eval = evaluate_pair(left, right);
+    let ord = match eval {
+        PairEval::Same => Ordering::Equal,
+        PairEval::Left => Ordering::Less,
+        PairEval::Right => Ordering::Greater,
+    };
+    return ord
 }
 
 fn evaluate_pair(left: String, right: String) -> PairEval {
@@ -74,7 +103,6 @@ fn evaluate_pair(left: String, right: String) -> PairEval {
         return PairEval::Left;
     }
 
-    println!();
     return PairEval::Same;
 }
 
