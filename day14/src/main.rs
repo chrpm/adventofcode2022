@@ -6,7 +6,64 @@ fn main() {
 
     let input = load_input(file_path);
 
-    println!("{:?}", input);
+    let mut grid = vec![vec!['.'; 200]; 600];
+
+    for path in input {
+    println!("{:?}", path);
+        let elements_to_put_rock_in = elements_to_rock_in_path(path);
+    println!("{:?}", elements_to_put_rock_in);
+        for e in elements_to_put_rock_in {
+            grid[e.0 as usize][e.1 as usize] = '#';
+        }
+        break;
+    }
+
+    // x 0 - 600
+    // y 0 - 200
+
+   //  println!("{:?}", grid);
+}
+
+fn elements_to_rock_in_path(path: Vec<(i32, i32)>) -> Vec<(i32, i32)> {
+    let mut elements_to_rock = Vec::new();
+
+    for i in 1..path.len() { 
+        let p1 = path[i-1];
+        let p2 = path[i];
+        let mut points_rocks = elements_to_rock_between_points(p1, p2);
+        elements_to_rock.append(&mut points_rocks);
+    }
+
+    return elements_to_rock;
+}
+
+fn elements_to_rock_between_points(p1: (i32, i32), p2:(i32, i32)) -> Vec<(i32, i32)> {
+    let mut rocks = Vec::new();
+    if p1.0 > p2.0 {
+        for i in 0..(p1.0 - p2.0) {
+            rocks.push((p2.0+i, p2.1))
+        }
+    }
+
+    if p1.0 < p2.0 {
+        for i in 0..(p2.0 - p1.0) {
+            rocks.push((p1.0+i, p1.1))
+        }
+    }
+
+    if p1.1 > p2.1 {
+        for i in 0..(p1.1 - p2.1) {
+            rocks.push((p2.0, p2.1+i))
+        }
+    }
+
+    if p1.1 < p2.1 {
+        for i in 0..(p2.1 - p1.1) {
+            rocks.push((p1.0, p1.1+i))
+        }
+    }
+
+    return rocks;
 }
 
 fn load_input(file_path: &str) -> Vec<Vec<(i32, i32)>> {
