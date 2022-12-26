@@ -13,6 +13,7 @@ fn main() {
     test();
 
     let file_path = "test_input.txt";
+    // let file_path = "input.txt";
     let packet_pairs = load_input(file_path);
 
     let mut pairs_in_order:Vec<i32> = Vec::new();
