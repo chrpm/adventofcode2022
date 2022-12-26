@@ -1,29 +1,55 @@
 use std::fs;
 
 fn main() {
-    let file_path = "test_input.txt";
-    // let file_path = "input.txt";
+    let file_path = "input.txt";
 
     let input = load_input(file_path);
-
-    let mut grid = vec![vec!['.'; 200]; 600];
+    let mut max_y = 0;
+    let mut grid = vec![vec!['.'; 200]; 1000];
 
     for path in input {
-        println!("{:?}", path);
         let elements_to_put_rock_in = elements_to_rock_in_path(path);
-        println!("{:?}", elements_to_put_rock_in);
         for e in elements_to_put_rock_in {
+            if e.1 > max_y as i32 {
+                max_y = e.1;
+            }
             grid[e.0 as usize][e.1 as usize] = '#';
         }
     }
 
     for i in 0..grid.len() {
-        for j in 0..grid[0].len() {
-            if grid[i][j] == '#' {
-                println!("{} {}", i, j);
+        grid[i][(max_y+2) as usize] = '#';
+    }
+
+    let sand_entry = (500, 0);
+    let mut current_sand_point = sand_entry;
+    let mut sand_at_rest = 0;
+    let mut part_1_sand_count = 0;
+    let part_2_sand_count;
+
+    loop {
+        if current_sand_point.1 > max_y && part_1_sand_count == 0 {
+            part_1_sand_count = sand_at_rest;
+        }
+
+        if grid[current_sand_point.0 as usize][(current_sand_point.1+1) as usize] == '.' {
+            current_sand_point = (current_sand_point.0, current_sand_point.1+1);
+        } else if grid[current_sand_point.0-1][(current_sand_point.1+1) as usize] == '.' {
+            current_sand_point = (current_sand_point.0-1, current_sand_point.1+1);
+        } else if grid[current_sand_point.0+1][(current_sand_point.1+1) as usize] == '.' {
+            current_sand_point = (current_sand_point.0+1, current_sand_point.1+1);
+        } else {
+            sand_at_rest += 1;
+            grid[current_sand_point.0][current_sand_point.1 as usize] = 'o';
+            if current_sand_point == sand_entry {
+                part_2_sand_count = sand_at_rest;
+                break;
             }
+            current_sand_point = sand_entry;
         }
     }
+
+    println!("successfully place sand p1:{} p2:{}", part_1_sand_count, part_2_sand_count);
 }
 
 fn elements_to_rock_in_path(path: Vec<(i32, i32)>) -> Vec<(i32, i32)> {
