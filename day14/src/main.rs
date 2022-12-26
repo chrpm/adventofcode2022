@@ -9,19 +9,21 @@ fn main() {
     let mut grid = vec![vec!['.'; 200]; 600];
 
     for path in input {
-    println!("{:?}", path);
+        println!("{:?}", path);
         let elements_to_put_rock_in = elements_to_rock_in_path(path);
-    println!("{:?}", elements_to_put_rock_in);
+        println!("{:?}", elements_to_put_rock_in);
         for e in elements_to_put_rock_in {
             grid[e.0 as usize][e.1 as usize] = '#';
         }
-        break;
     }
 
-    // x 0 - 600
-    // y 0 - 200
-
-   //  println!("{:?}", grid);
+    for i in 0..grid.len() {
+        for j in 0..grid[0].len() {
+            if grid[i][j] == '#' {
+                println!("{} {}", i, j);
+            }
+        }
+    }
 }
 
 fn elements_to_rock_in_path(path: Vec<(i32, i32)>) -> Vec<(i32, i32)> {
@@ -40,25 +42,25 @@ fn elements_to_rock_in_path(path: Vec<(i32, i32)>) -> Vec<(i32, i32)> {
 fn elements_to_rock_between_points(p1: (i32, i32), p2:(i32, i32)) -> Vec<(i32, i32)> {
     let mut rocks = Vec::new();
     if p1.0 > p2.0 {
-        for i in 0..(p1.0 - p2.0) {
+        for i in 0..(p1.0 - p2.0)+1 {
             rocks.push((p2.0+i, p2.1))
         }
     }
 
     if p1.0 < p2.0 {
-        for i in 0..(p2.0 - p1.0) {
+        for i in 0..(p2.0 - p1.0)+1 {
             rocks.push((p1.0+i, p1.1))
         }
     }
 
     if p1.1 > p2.1 {
-        for i in 0..(p1.1 - p2.1) {
+        for i in 0..(p1.1 - p2.1)+1 {
             rocks.push((p2.0, p2.1+i))
         }
     }
 
     if p1.1 < p2.1 {
-        for i in 0..(p2.1 - p1.1) {
+        for i in 0..(p2.1 - p1.1)+1 {
             rocks.push((p1.0, p1.1+i))
         }
     }
